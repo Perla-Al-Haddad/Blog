@@ -40,6 +40,7 @@ a,
   --bl-dark-light: #777;
 
   --bl-blue: #38b6ff;
+  --bs-code-color: var(--bl-blue);
 }
 
 body {
@@ -110,4 +111,43 @@ hr {
 
 .text-bold {
   font-weight: 600;
+}
+
+code, .code-snippet {
+  background-color: var(--bl-dark-soft);
+  color: var(--bl-blue);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: "Ubuntu";
+}
+
+pre > code {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* pre {
+  background-color: var(--bl-dark-soft);
+  padding: 1rem;
+  border-radius: 4px;
+} */
+
+.post-container h1,
+.post-container h2,
+.post-container h3,
+.post-container h4,
+.post-container h5,
+.post-container h6 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  font-weight: 500;
+}
+
+.post-container h1 {
+  margin-top: 0;
+}
+
+.post-container hr {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }

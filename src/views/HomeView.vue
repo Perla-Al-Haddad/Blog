@@ -1,4 +1,27 @@
-<script setup lang="ts">
+<script lang="ts">
+import MarkdownIt from 'markdown-it';
+import { defineComponent } from 'vue';
+
+const response = await fetch('/01.md');
+const md = new MarkdownIt();
+
+const articleHTML = md.render(await response.text());
+
+import hljs from 'highlight.js';
+
+export default defineComponent({
+  data() {
+    return {
+      text: articleHTML
+    }
+  },
+
+  mounted(): void {
+    hljs.highlightAll();    
+  }
+});
+
+
 </script>
 
 <template>
@@ -12,39 +35,20 @@
           <hr>
           <ul class="navbar-nav list-unstyled">
             <li class="nav-item">
-              <a href="" class="nav-link text-gray-light">
+              <a href="" class="nav-link text-gray-light active">
                 Configuring Database Connection in .NET
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link text-gray-light">
+                Data Access Layer
               </a>
             </li>
           </ul>
         </div>
 
         <div class="col-8 px-6">
-          <h1 class="mb-5 text-bold">Stack vs Heap Memory Allocation</h1>
-          <p>
-            The Repository design pattern is a data access pattern used in software development.
-            Repository design pattern as defined by Martin Fowler isolates your domain from caring about how storage is
-            implemented so all objects retrieved can be treated like an in-memory collection.
-          </p>
-          <p>
-            You could have a repository based on a database, an XML file, a text document, a web service, or anything.
-            The applications code itself doesn't care. This makes it very useful for testing.
-          </p>
-          <p>
-            For brevity, we will refer to database/data store/data source as persistence store throughout this article.
-          </p>
-
-          <hr class="mt-5">
-
-          <h2 class="my-5 text-bold">What are Repositories?</h2>
-          <p>
-            Repositories are classes or components that encapsulate the logic required to access persistence store.
-
-            Repositories, in practice, are used to perform database operations for domain objects (Entity and Value
-            types).
-
-            Generally, a separate repository is used for each Entity (or Aggregate Root).
-          </p>
+          <section class="post-container" v-html="text"></section>
         </div>
 
         <div class="col-2">
@@ -55,12 +59,12 @@
           <ul class="navbar-nav list-unstyled">
             <li class="nav-item">
               <a href="" class="nav-link text-gray-light">
-                Stack vs Heap Memory Allocation
+                Configuring your database connection in .NET
               </a>
             </li>
             <li class="nav-item">
               <a href="" class="nav-link text-gray-light">
-                What are Repositories?
+                Adding connection strings to <span class="code-snippet">appsettings.json</span>
               </a>
             </li>
           </ul>
