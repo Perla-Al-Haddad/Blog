@@ -37,7 +37,7 @@
                             </ul> -->
                         </li>
 
-                        <!-- <ThemeToggleButton @toggle-light-mode="$emit('toggle-light-mode')" /> -->
+                        <ThemeToggleButton @toggle-light-mode="$emit('toggle-light-mode')" />
                         <span class="menu-item delimiter"></span>
                         <SearchBar />
                     </ul>
@@ -48,14 +48,14 @@
 </template>
   
 <script lang="ts">
-// import ThemeToggleButton from "./utils/ThemeToggleButton.vue";
+import ThemeToggleButton from "./ThemeToggleButton.vue";
 import SearchBar from "./SearchBar.vue";
 import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: "MainHeader",
     components: {
-        // ThemeToggleButton,
+        ThemeToggleButton,
         SearchBar
     },
     data() {

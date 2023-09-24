@@ -90,3 +90,24 @@ input {
 .text-gray-light {
   color: var(--bl-dark-light)
 }
+
+.px-6 {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+hr {
+  color: var(--bl-dark-light);
+}
+
+.fs-7 {
+  font-size: 0.9rem;
+} 
+
+.fs-8 {
+  font-size: 0.8rem;
+} 
+
+.text-bold {
+  font-weight: 600;
+}
