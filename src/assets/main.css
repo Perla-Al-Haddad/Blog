@@ -92,11 +92,6 @@ input {
   color: var(--bl-dark-light)
 }
 
-.px-6 {
-  padding-left: 4rem;
-  padding-right: 4rem;
-}
-
 hr {
   color: var(--bl-dark-light);
 }
@@ -126,12 +121,6 @@ pre > code {
   color: inherit;
 }
 
-/* pre {
-  background-color: var(--bl-dark-soft);
-  padding: 1rem;
-  border-radius: 4px;
-} */
-
 .post-container h1,
 .post-container h2,
 .post-container h3,
@@ -150,4 +139,26 @@ pre > code {
 .post-container hr {
   margin-top: 3rem;
   margin-bottom: 3rem;
+}
+
+/* Media query for medium screens (>= 768px) */
+@media (min-width: 768px) {
+  .px-md-6 {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+  .col-md-2 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+  .col-md-8 {
+    width: 60%;
+  }
+
+}
+
+@media (min-width: 1400px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    max-width: 1400px;
+  }
 }

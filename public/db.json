@@ -1,0 +1,53 @@
+{
+    "Concepts & Theory": [
+        {
+            "index": "002",
+            "title": "Data Access Layer",
+            "dateCreated": "09:09:2023"
+        },
+        {
+            "index": "003",
+            "title": "Dependency Injection",
+            "tags": [
+                "Design Pattern"
+            ]
+        },
+        {
+            "index": "004",
+            "title": "Object Relational Mapping (ORM)"
+        },
+        {
+            "index": "005",
+            "title": "Stack vs Heap Memory Allocation"
+        }
+    ],
+    ".NET": [
+        {
+            "index": "001",
+            "title": "Configuring your database connection in .NET",
+            "tags": [
+                ".NET",
+                "MSSQL"
+            ]
+        }
+    ],
+    "Redis": [
+        {
+            "index": "007",
+            "title": "Redis as a Caching Service",
+            "tags": [
+                "Redis"
+            ]
+        }
+    ],
+    "Database Engineering": [
+        {
+            "index": "006",
+            "title": "ACID in Relational Database Systems",
+            "tags": [
+                "PostgreSQL",
+                "Database"
+            ]
+        }
+    ]
+}
