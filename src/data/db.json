@@ -1,16 +1,30 @@
 {
+    
+    ".NET": [
+        {
+            "index": "001",
+            "title": "Configuring your database connection in .NET",
+            "tags": [
+                ".NET",
+                "MSSQL"
+            ],
+            "dateCreated": "2023-09-09T00:00:00.000Z"
+        }
+    ],
     "Concepts & Theory": [
         {
             "index": "002",
             "title": "Data Access Layer",
-            "dateCreated": "09:09:2023"
+            "dateCreated": "2023-09-09T00:00:00.000Z",
+            "tags": ["Fundamentals"]
         },
         {
             "index": "003",
             "title": "Dependency Injection",
             "tags": [
                 "Design Pattern"
-            ]
+            ],
+            "dateCreated": "2023-09-09T00:00:00.000Z"
         },
         {
             "index": "004",
@@ -21,13 +35,13 @@
             "title": "Stack vs Heap Memory Allocation"
         }
     ],
-    ".NET": [
+    "Database Engineering": [
         {
-            "index": "001",
-            "title": "Configuring your database connection in .NET",
+            "index": "006",
+            "title": "ACID in Relational Database Systems",
             "tags": [
-                ".NET",
-                "MSSQL"
+                "PostgreSQL",
+                "Database"
             ]
         }
     ],
@@ -37,16 +51,6 @@
             "title": "Redis as a Caching Service",
             "tags": [
                 "Redis"
-            ]
-        }
-    ],
-    "Database Engineering": [
-        {
-            "index": "006",
-            "title": "ACID in Relational Database Systems",
-            "tags": [
-                "PostgreSQL",
-                "Database"
             ]
         }
     ]
