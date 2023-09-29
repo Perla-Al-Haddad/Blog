@@ -1,8 +1,13 @@
 <script lang="ts">
 import MarkdownIt from 'markdown-it';
+import MarkdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import { defineComponent, onBeforeMount, ref } from 'vue';
 import { useRoute } from "vue-router";
+
+import HierarchyList from "../components/HierarchyList.vue";
+import { type IHierarchyNode } from "../types/IHierarchyNode";
+
 import categoriesPosts from "../data/db.json";
 
 interface IPost {
@@ -10,6 +15,10 @@ interface IPost {
     title: string,
     tags: Array<string>,
     dateCreated?: Date
+}
+
+const generateHeadingID = (s: string) => {
+    return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))
 }
 
 const fetchPostList = () => {
@@ -30,14 +39,59 @@ const fetchPostList = () => {
 
 const postList = fetchPostList();
 
-const fetchPost = async (fileName: String | String[]) => {
+const fetchPostFile = async (fileName: String) => {
     const response = await fetch(`/posts/${fileName}.md`);
-    const md = new MarkdownIt();
+    const markdownText = await response.text();
 
-    const results = md.render(await response.text())
-    hljs.highlightAll();
+    return markdownText;
+}
+
+const convertMarkdownToHTML = (markdownText: string) => {
+    const md = new MarkdownIt();
+    md.use(MarkdownItAnchor, {
+        slugify: (s) => generateHeadingID(s)
+    });
+
+    const results = md.render(markdownText)
+
     return results;
 }
+
+const extractPostHierarchy = (markdownText: string): IHierarchyNode[] => {
+    const lines = markdownText.split('\n');
+    const hierarchy: IHierarchyNode[] = [];
+    let stack: IHierarchyNode[] = [];
+
+    for (const line of lines) {
+        const match = line.match(/^(#+)\s+(.*)/);
+
+        if (!match) {
+            continue;
+        }
+
+        const [, hashes, text] = match;
+        const level = hashes.length - 1;
+
+        const newNode: IHierarchyNode = { text, children: [], level: level, id: generateHeadingID(text) };
+
+        if (level === 1) {
+            // Main title
+            hierarchy.push(newNode);
+            stack = [newNode];
+        } else if (level > 1) {
+            // Subtitle
+            const parentLevel = level - 1;
+            while (stack.length > parentLevel) {
+                stack.pop();
+            }
+            stack[stack.length - 1].children.push(newNode);
+            stack.push(newNode);
+        }
+    }
+
+    return hierarchy;
+};
+
 
 const fetchPostMetadata = (index: String): IPost => {
     const postMetadata: IPost = postList.filter((el) => el.index == index)[0];
@@ -53,21 +107,26 @@ const fetchPostMetadata = (index: String): IPost => {
 export default defineComponent({
     setup(this) {
         const route = useRoute();
-        let index = ref<string>(route.params.index as string);
+        let postIndex = ref<string>(route.params.index as string);
         let postHTML = ref<string>("");
         let postMetadata = ref<IPost>();
+        let postHierarchy = ref<IHierarchyNode[]>();
 
         onBeforeMount(async () => {
-            let postIndex = index;
-            let postContent = await fetchPost(postIndex.value);
+            const postFile = await fetchPostFile(postIndex.value);
+
             postMetadata.value = fetchPostMetadata(postIndex.value);
-            postHTML.value = postContent;
+            postHTML.value = convertMarkdownToHTML(postFile);
+            postHierarchy.value = extractPostHierarchy(postFile);
+
+            console.log(postHierarchy.value)
         });
 
         return {
-            index,
+            postIndex,
             postHTML,
-            postMetadata
+            postMetadata,
+            postHierarchy
         }
     },
 
@@ -76,24 +135,64 @@ export default defineComponent({
             postMetadata: null as unknown as IPost,
             index: '',
             postHTML: '',
-            categoriesPosts: categoriesPosts
+            categoriesPosts: categoriesPosts,
+            postHierarchy: null as unknown as IHierarchyNode[]
         }
     },
 
     async beforeRouteUpdate(to, _) {
         const postIndex = to.params.index as string;
-        const postHTML = await fetchPost(postIndex);
+
+        const postFile = await fetchPostFile(postIndex);
+
         const postMetadata = fetchPostMetadata(postIndex);
+        const postHTML = convertMarkdownToHTML(postFile);
+        const postHierarchy = extractPostHierarchy(postFile);
 
         this.postMetadata = postMetadata;
         this.postHTML = postHTML;
-        this.index = postIndex;
+        this.postIndex = postIndex;
+        this.postHierarchy = postHierarchy;
     },
 
     updated() {
         hljs.highlightAll();
-    }
+    },
 
+    props: {
+        hierarchy: Array,
+    },
+
+    components: {
+        HierarchyList
+    },
+
+    mounted() {
+        const headings = this.$el.querySelectorAll('.post-container h1, .post-container h2, .post-container h3');
+        const sidebarLinks = this.$el.querySelectorAll('#TableOfContents a');
+
+        const options = {
+            root: this.$el,
+            rootMargin: '0px',
+            threshold: 0.5, // Adjust the threshold as needed
+        };
+        
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const anchor = this.$el.querySelector(`#TableOfContents a[href="#${entry.target.id}"]`);
+                    if (anchor) {
+                        sidebarLinks.forEach((link) => link.classList.remove('active'));
+                        anchor.classList.add('active');
+                    }
+                }
+            });
+        }, options);
+
+        headings.forEach((heading) => {
+            observer.observe(heading);
+        });
+    }
 });
 </script>
 
@@ -114,7 +213,7 @@ export default defineComponent({
                             <ul>
                                 <li v-for="post in posts" class="nav-item">
                                     <RouterLink :to="`/${post.index}`"
-                                        :class="`nav-link text-gray-light ${(index == post.index) ? 'active' : ''}`">{{
+                                        :class="`nav-link text-gray-light ${(postIndex == post.index) ? 'active' : ''}`">{{
                                             post.title }}
                                     </RouterLink>
                                 </li>
@@ -124,8 +223,9 @@ export default defineComponent({
                 </div>
 
                 <div v-if="postMetadata" class="col col-md-8 px-md-6">
-                    <h1>{{ postMetadata.title }}</h1>
-                    <p class="fs-8 text-gray-light text-end" v-if="postMetadata.dateCreated">{{ postMetadata.dateCreated.toLocaleDateString() }}</p>
+                    <h1 id="test">{{ postMetadata.title }}</h1>
+                    <p class="fs-8 text-gray-light text-end" v-if="postMetadata.dateCreated">{{
+                        postMetadata.dateCreated.toLocaleDateString() }}</p>
                     <ul class="list-unstyled d-flex gap-2 align-items-center">
                         <li class="fs-8 tag" v-if="postMetadata.tags" v-for="tag in postMetadata.tags">#{{ tag }}</li>
                     </ul>
@@ -133,17 +233,12 @@ export default defineComponent({
                     <section class="post-container" v-html="postHTML"></section>
                 </div>
 
-                <div class="col col-md-2">
-                    <h6 class="fs-8 text-bold text-uppercase">
+                <div id="TableOfContents" class="col col-md-2 sticky-col navigation-container">
+                    <h6 class="fs-8 mt-3 text-bold text-uppercase">
                         Table of contents
                     </h6>
                     <hr>
-                    <ul class="navbar-nav list-unstyled">
-                        <li class="nav-item">
-                            <a href="" class="nav-link text-gray-light">
-                            </a>
-                        </li>
-                    </ul>
+                    <HierarchyList :level=1 :hierarchy="postHierarchy" />
                 </div>
             </div>
         </div>
