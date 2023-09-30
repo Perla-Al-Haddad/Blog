@@ -9,6 +9,16 @@
                 "MSSQL"
             ],
             "dateCreated": "2023-09-09T00:00:00.000Z"
+        },
+        {
+            "index": "008",
+            "title": "JWT Authentication in .NET 7",
+            "tags": [
+                ".NET",
+                "Authentication",
+                "JWT"
+            ],
+            "dateCreated": "2023-09-30T00:00:00.000Z"
         }
     ],
     "Concepts & Theory": [
