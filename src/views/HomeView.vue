@@ -7,6 +7,7 @@ import { useRoute } from "vue-router";
 
 import HierarchyList from "../components/HierarchyList.vue";
 import { type IHierarchyNode } from "../types/IHierarchyNode";
+import { Scroller } from "../utils/Scroller";
 
 import categoriesPosts from "../data/db.json";
 
@@ -18,7 +19,7 @@ interface IPost {
 }
 
 const generateHeadingID = (s: string) => {
-    return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))
+    return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-').replace(/`/g, "").replace(/\./g, ''));
 }
 
 const fetchPostList = () => {
@@ -118,8 +119,6 @@ export default defineComponent({
             postMetadata.value = fetchPostMetadata(postIndex.value);
             postHTML.value = convertMarkdownToHTML(postFile);
             postHierarchy.value = extractPostHierarchy(postFile);
-
-            console.log(postHierarchy.value)
         });
 
         return {
@@ -157,6 +156,7 @@ export default defineComponent({
 
     updated() {
         hljs.highlightAll();
+        Scroller.init();
     },
 
     props: {
@@ -167,32 +167,6 @@ export default defineComponent({
         HierarchyList
     },
 
-    mounted() {
-        const headings = this.$el.querySelectorAll('.post-container h1, .post-container h2, .post-container h3');
-        const sidebarLinks = this.$el.querySelectorAll('#TableOfContents a');
-
-        const options = {
-            root: this.$el,
-            rootMargin: '0px',
-            threshold: 0.5, // Adjust the threshold as needed
-        };
-        
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const anchor = this.$el.querySelector(`#TableOfContents a[href="#${entry.target.id}"]`);
-                    if (anchor) {
-                        sidebarLinks.forEach((link) => link.classList.remove('active'));
-                        anchor.classList.add('active');
-                    }
-                }
-            });
-        }, options);
-
-        headings.forEach((heading) => {
-            observer.observe(heading);
-        });
-    }
 });
 </script>
 

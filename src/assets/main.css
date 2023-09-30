@@ -94,6 +94,10 @@ input {
   color: var(--bl-dark-light)
 }
 
+.text-active {
+  color: var(--bl-blue);
+}
+
 hr {
   color: var(--bl-dark-light);
 }
