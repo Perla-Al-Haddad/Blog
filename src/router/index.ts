@@ -11,12 +11,12 @@ const router = createRouter({
       redirect: { name: "home" }
     },
     {
-      path: '/Blog/:index',
+      path: '/:index',
       name: 'home',
       component: HomeView,
     },
     {
-      path: '/Blog/about',
+      path: '/about',
       name: 'about',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
