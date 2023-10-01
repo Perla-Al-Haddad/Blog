@@ -19,6 +19,16 @@
                 "JWT"
             ],
             "dateCreated": "2023-09-30T00:00:00.000Z"
+        },
+        {
+            "index": "009",
+            "title": "JWT Creation in .NET 7",
+            "tags": [
+                ".NET",
+                "Authentication",
+                "JWT"
+            ],
+            "dateCreated": "2023-10-01T00:00:00.000Z"
         }
     ],
     "Concepts & Theory": [
